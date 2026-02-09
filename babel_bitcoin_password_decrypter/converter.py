@@ -10,6 +10,7 @@ from __future__ import annotations
 from .bip39 import mnemonic_to_entropy, entropy_to_mnemonic
 from .syllables import bytes_to_syllables, syllables_to_bytes, bytes_to_syllable_list
 from .babel_lib import search_text, coordinates_to_url
+from .story import entropy_to_story, story_to_entropy
 
 
 def seed_to_babel(mnemonic: str) -> str:
@@ -52,6 +53,31 @@ def seed_to_url(mnemonic: str) -> str:
     Convert a seed phrase directly to its Library of Babel URL.
     """
     hex_name, wall, shelf, volume, page = search_text(mnemonic)
+    return coordinates_to_url(hex_name, wall, shelf, volume, page)
+
+
+def seed_to_story(mnemonic: str) -> str:
+    """
+    Convert a seed phrase to a memorable story (4 vivid sentences).
+    """
+    entropy = mnemonic_to_entropy(mnemonic)
+    return entropy_to_story(entropy)
+
+
+def story_to_seed(story: str) -> str:
+    """
+    Convert a story back to a seed phrase.
+    """
+    entropy = story_to_entropy(story)
+    return entropy_to_mnemonic(entropy)
+
+
+def story_to_url(story: str) -> str:
+    """
+    Convert a story to a Library of Babel URL.
+    """
+    seed_phrase = story_to_seed(story)
+    hex_name, wall, shelf, volume, page = search_text(seed_phrase)
     return coordinates_to_url(hex_name, wall, shelf, volume, page)
 
 

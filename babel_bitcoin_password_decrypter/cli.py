@@ -5,26 +5,30 @@ Command-line interface for babel-bitcoin-password-decrypter.
 import argparse
 import sys
 
-from .converter import seed_to_babel, babel_to_seed, babel_to_url, seed_to_url, format_babel_string, format_as_sentences
+from .converter import (
+    seed_to_babel, babel_to_seed, babel_to_url, seed_to_url,
+    format_babel_string, format_as_sentences,
+    seed_to_story, story_to_seed, story_to_url
+)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Convert BIP39 seed phrases to memorable babel strings and Library of Babel URLs.",
+        description="Convert BIP39 seed phrases to memorable stories and Library of Babel URLs.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Convert seed phrase to babel string
-  babel-btc encode "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+  # Convert seed phrase to a memorable story (RECOMMENDED)
+  babel-btc encode --story "your twelve word seed phrase here"
 
-  # Convert babel string to Library of Babel URL
-  babel-btc decode "aaaaaaaaaaaaaaaa"
+  # Convert story back to Library of Babel URL
+  babel-btc decode --story "A purple elephant dances in Tokyo..."
 
-  # Show formatted output (easier to memorize)
-  babel-btc encode --format "abandon abandon ... about"
+  # Convert seed phrase to syllable string
+  babel-btc encode "abandon abandon ... about"
 
-  # Show seed phrase instead of URL
-  babel-btc decode --seed "aaaaaaaaaaaaaaaa"
+  # Show seed phrase from story
+  babel-btc decode --story --seed "A purple elephant..."
         """
     )
 
@@ -33,21 +37,21 @@ Examples:
     # Encode command
     encode_parser = subparsers.add_parser(
         'encode',
-        help='Convert a seed phrase to a babel string'
+        help='Convert a seed phrase to a memorable format'
     )
     encode_parser.add_argument(
         'seed_phrase',
         help='12-word BIP39 seed phrase (in quotes)'
     )
     encode_parser.add_argument(
-        '--format', '-f',
+        '--story',
         action='store_true',
-        help='Format output with hyphens for readability'
+        help='Output as memorable story (4 vivid sentences) - RECOMMENDED'
     )
     encode_parser.add_argument(
-        '--sentences', '-s',
+        '--format', '-f',
         action='store_true',
-        help='Format as memorable pseudo-sentences'
+        help='Format syllable output with hyphens'
     )
     encode_parser.add_argument(
         '--url', '-u',
@@ -58,11 +62,16 @@ Examples:
     # Decode command
     decode_parser = subparsers.add_parser(
         'decode',
-        help='Convert a babel string to a Library of Babel URL'
+        help='Convert a story/babel string to Library of Babel URL'
     )
     decode_parser.add_argument(
-        'babel_string',
-        help='The babel string to decode'
+        'input',
+        help='The story or babel string to decode'
+    )
+    decode_parser.add_argument(
+        '--story',
+        action='store_true',
+        help='Input is a story (4 sentences)'
     )
     decode_parser.add_argument(
         '--seed', '-s',
@@ -74,8 +83,8 @@ Examples:
 
     try:
         if args.command == 'encode':
-            if args.sentences:
-                print(format_as_sentences(args.seed_phrase))
+            if args.story:
+                print(seed_to_story(args.seed_phrase))
             else:
                 babel = seed_to_babel(args.seed_phrase)
                 if args.format:
@@ -88,15 +97,22 @@ Examples:
                 print(f"\nLibrary of Babel URL:\n{url}")
 
         elif args.command == 'decode':
-            # Remove any formatting (hyphens, spaces, periods)
-            clean_babel = args.babel_string.replace('-', '').replace(' ', '').replace('.', '').lower()
-
-            if args.seed:
-                seed = babel_to_seed(clean_babel)
-                print(seed)
+            if args.story:
+                if args.seed:
+                    seed = story_to_seed(args.input)
+                    print(seed)
+                else:
+                    url = story_to_url(args.input)
+                    print(url)
             else:
-                url = babel_to_url(clean_babel)
-                print(url)
+                # Syllable mode - remove formatting
+                clean_babel = args.input.replace('-', '').replace(' ', '').replace('.', '').lower()
+                if args.seed:
+                    seed = babel_to_seed(clean_babel)
+                    print(seed)
+                else:
+                    url = babel_to_url(clean_babel)
+                    print(url)
 
     except ValueError as e:
         print(f"Error: {e}", file=sys.stderr)
