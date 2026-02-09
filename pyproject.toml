@@ -1,16 +1,16 @@
 [project]
-name = "babel-bitcoin-password-decrypter"
+name = "seed-to-tale"
 version = "0.1.0"
-description = "Convert BIP39 seed phrases to memorable, pronounceable babel strings"
+description = "Convert BIP39 seed phrases to memorable stories"
 authors = [
-    {name = "Abdul Khaliq",email = "thedjawking@gmail.com"}
+    {name = "klsoen"}
 ]
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
 
 [project.scripts]
-babel-btc = "babel_bitcoin_password_decrypter.cli:main"
+seed-to-tale = "seed_to_tale.cli:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
