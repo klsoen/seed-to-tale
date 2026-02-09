@@ -4,12 +4,10 @@ Convert BIP39 seed phrases to memorable stories that map to Library of Babel pag
 
 ## Concept
 
-Instead of remembering 12 random words, remember a **4-sentence story** like:
+Instead of remembering 12 random words, remember a **2-sentence story** like:
 
-> A settled lotus blinks in Paris.
-> The southern tortoise opens in a warehouse.
-> One sapphire gecko lingers in a throne room.
-> My global star resumes in a greenhouse.
+> A bound dusk squid loudly destroys in a lovely island near Cologne.
+> The elegant steel golem wrongfully hates in a vibrant badlands near Karachi.
 
 This story encodes the same 128-bit entropy as your seed phrase. You can:
 1. Convert the story back to your seed phrase
@@ -40,16 +38,14 @@ babel-btc encode --story "voice clock able naive tonight decorate mule night spi
 
 Output:
 ```
-A settled lotus blinks in Paris.
-The southern tortoise opens in a warehouse.
-One sapphire gecko lingers in a throne room.
-My global star resumes in a greenhouse.
+A bound dusk squid loudly destroys in a lovely island near Cologne.
+The elegant steel golem wrongfully hates in a vibrant badlands near Karachi.
 ```
 
 ### Decode a Story to Library of Babel URL
 
 ```bash
-babel-btc decode --story "A settled lotus blinks in Paris. The southern tortoise opens in a warehouse. One sapphire gecko lingers in a throne room. My global star resumes in a greenhouse."
+babel-btc decode --story "A bound dusk squid loudly destroys in a lovely island near Cologne. The elegant steel golem wrongfully hates in a vibrant badlands near Karachi."
 ```
 
 Output:
@@ -60,7 +56,7 @@ https://libraryofbabel.info/book.cgi?5t62rny...-w1-s1-v01:1
 ### Decode a Story to Seed Phrase
 
 ```bash
-babel-btc decode --story --seed "A settled lotus blinks in Paris. The southern tortoise opens in a warehouse. One sapphire gecko lingers in a throne room. My global star resumes in a greenhouse."
+babel-btc decode --story --seed "A bound dusk squid loudly destroys in a lovely island near Cologne. The elegant steel golem wrongfully hates in a vibrant badlands near Karachi."
 ```
 
 Output:
@@ -73,7 +69,7 @@ voice clock able naive tonight decorate mule night spike miss network month
 No internet required! Display the full 3200-character Library of Babel page locally:
 
 ```bash
-babel-btc decode --story --page "A settled lotus blinks in Paris. The southern tortoise opens in a warehouse. One sapphire gecko lingers in a throne room. My global star resumes in a greenhouse."
+babel-btc decode --story --page "A bound dusk squid loudly destroys in a lovely island near Cologne. The elegant steel golem wrongfully hates in a vibrant badlands near Karachi."
 ```
 
 Output:
@@ -81,7 +77,7 @@ Output:
 Seed phrase: voice clock able naive tonight decorate mule night spike miss network month
 
 Library of Babel Location:
-  Hex: 5t62rnyxmjc65t1058j11voju41dzu8gzvsbtjyo50b3c4h8m5...
+  Hex: 5t62rny...
   Wall: 1, Shelf: 1, Volume: 1, Page: 1
 
 URL: https://libraryofbabel.info/book.cgi?...
@@ -90,6 +86,7 @@ URL: https://libraryofbabel.info/book.cgi?...
 PAGE CONTENT (3200 characters, 80x40):
 ================================================================================
 voice clock able naive tonight decorate mule night spike miss network month
+[... rest of page is spaces ...]
 ```
 
 ### Alternative: Syllable Encoding
@@ -139,12 +136,16 @@ print(location['hex_name'], location['wall'], location['shelf'], location['volum
 
 ## How It Works
 
-1. **Story Encoding**: Each sentence encodes 32 bits using word lists:
-   - 256 adjectives (8 bits)
-   - 256 nouns (8 bits)
-   - 256 verbs (8 bits)
-   - 256 locations (8 bits)
-   - 4 sentences = 128 bits = 12-word BIP39 seed
+1. **Story Encoding**: Each sentence encodes 64 bits using 8 word lists:
+   - 256 quality adjectives (8 bits) - fierce, gentle, ancient...
+   - 256 color adjectives (8 bits) - crimson, azure, golden...
+   - 256 creatures (8 bits) - dragon, wizard, phoenix...
+   - 256 adverbs (8 bits) - silently, boldly, gracefully...
+   - 256 verbs (8 bits) - dances, guards, transforms...
+   - 256 place adjectives (8 bits) - hidden, ancient, sacred...
+   - 256 place types (8 bits) - temple, fortress, volcano...
+   - 256 locations (8 bits) - Tokyo, Atlantis, Mars...
+   - **2 sentences = 128 bits = 12-word BIP39 seed**
 
 2. **Library of Babel**: The algorithm computes the exact "hexagon" coordinates where your seed phrase appears in the Library of Babel's infinite collection.
 
